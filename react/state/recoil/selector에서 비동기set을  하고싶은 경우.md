@@ -1,6 +1,10 @@
-# selector에서 async set은 지원하지 않는다.
+# Error: Recoil: Async selector sets are not currently supported.
+
+## recoil selector에서 set에서는 비동기를 처리하지 못한다.
 
 ### custom hook을 만들어 해결한다
+
+
 
 ```typescript
 const useRecoilDollar = () => {
