@@ -130,3 +130,37 @@ dispatch({ type: types.increase, by: 2 });
   // 액션 접근
   const increment = useBearStore.use.increment();
   ```
+
+<br/>
+<br/>
+
+## 액션은 스토어에서 분리해서 사용
+
+- 권장 사용법은 액션을 스토어에 상태값과 같이 배치하는것
+
+  ```js
+  export const useBoundStore = create((set) => ({
+    count: 0,
+    text: 'hello',
+    inc: () => set((state) => ({ count: state.count + 1 })),
+    setText: (text) => set({ text }),
+  }));
+  ```
+
+- 다른 방식으로는 외부에서 선언하기
+
+  - 코드 분리 용이
+
+  - hooks 사용하지 않아도 됨
+
+  ```js
+  export const useBoundStore = create(() => ({
+    count: 0,
+    text: 'hello',
+  }));
+
+  // setState로 선언
+  export const inc = () => useBoundStore.setState((state) => ({ count: state.count + 1 }));
+
+  export const setText = (text) => useBoundStore.setState({ text });
+  ```
