@@ -635,3 +635,244 @@ HTTP/1.1 가장 중요한 버전
   - 599 ??? -> 2xx (Server Error)
 
 ---
+
+# HTTP 헤더
+
+## 표현
+
+- Content-Type: 표현 데이터의 형식
+
+  - 미디어 타입, 문자 인코딩
+
+  - 컨텐트 바디에 들어가는 내용이 무엇인지
+
+    - text/html; charset=utf-8
+
+    - application/json
+
+    - image/png
+
+- Content-Encoding: 표현 데이터 압축 방식
+
+  - 표현 데이터를 압축하기 위해 사용
+
+  - 데이터를 전달하는 곳에서 압축 후 인코딩 헤더 추가
+
+  - 데이터를 읽는 쪽에서 헤더를 읽고 압축 해제
+
+- Content-Language: 표현 데이터의 자연 언어
+
+- Content-Length: 표현 데이터의 길이
+
+  - 바이트 단위
+
+  - Transfer-Encoding(전송 코딩)을 사용하면 Content-Length를 사용하면 안됨
+
+- 표현 헤더는 전송 응답 둘다 사용
+
+```
+Content-Type: text/html;charset=UTF-8
+Content-Encoding: gzip
+Content-Encoding: en
+Content-Length: 3423
+```
+
+## 협상(컨텐츠 네오시에이션)
+
+클라이언트가 원하는 표현에 맞춰서 전달하는 것
+
+- Accept: 클라이언트가 선호하는 미디어 타입 전달
+
+- Accep-Charset: 클라이언트가 선호하는 문자 인코딩 전달
+
+- Accept-Encoding: 클라이언트가 선호하는 압축 이코딩
+
+- Accept-Language: 클라이언트가 선호하는 자연언어
+
+  - Quality Values 값 사용
+
+  - 0~1,클수록 우선순위 높음 (생략하면 1)
+
+- 협상 헤더는 요청시에만 사용
+
+- Quality Values
+
+  - 구체적인 것이 우선순위
+
+    Accept : text/\*, text/plain, text/html
+
+  - 구체적인 것을 기준으로 미디어 타입을 맞춘다.
+
+apple.com에서 확인한 헤더
+
+```
+Accept: */*
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: ko,ja;q=0.9,ko-KR;q=0.8,en-US;q=0.7,en;q=0.6,ja-JP;q=0.5
+```
+
+## 전송방식
+
+- 단순전송
+
+  - Content-Length
+
+- 압축전송
+
+  - Content-Encoding(추가)
+
+- 분할 전송
+
+  - Transfer-Encoding: chunked
+
+- 번위 전송
+
+  - Content-Range
+
+## 일반 정보
+
+- From
+
+  - 잘 사용하진 않음
+
+  - 검색 에진 같은 곳에서 주로 사용
+
+  - 요청에서 사용
+
+- <b>Referer</b>
+
+  - 이전 웹 페이지 주소
+
+  - 유입 경로 분석 가능
+
+  - 요청에서 사용
+
+- <b>User-Agent</b>
+
+  - 크라리언트 애플리케이션 정보(웹 브라우저 정보)
+
+  - 통계 정보
+
+  - 어떤 종류의 브라우저에서 장애가 발생하는지 파악 가능
+
+  - 요청에서 사용
+
+- <b>Server</b>
+
+  - 요청을 처리하는 ORIGIN 서버의 소프트웨어 정보
+
+  - 응답에서 사용
+
+- <b>Date</b>
+
+  - 메세지가 발생한 날짜와 시간
+
+  - 응답에서만 사용
+
+## 특별 정보
+
+- Host
+
+  - 요청에서 사용
+
+  - 필수값
+
+  - 하나의 서버가 여러 도메인을 처리해야 할 때
+
+  - 하나의 IP주소에 여러 도메인이 적용되어 있을 때
+
+- Location
+
+  - 3XX 응답에 Location이 있으면 자동으로 Location으로 이동
+
+  - 201 : Location 값은 요청에 의해 생성된 리소스 URI
+
+- Allow (많이 쓰진 않음)
+
+  - 405 (Method Now Allowed)에서 응답에 포함해야함
+
+- Retry-After
+
+  - 503(Service Unavailable) : 서비스가 언제까지 불능인지 알려 줄 수 있음
+
+## 인증
+
+- Authorization
+
+  - 클라이언트의 인증 정보를 서버에 전달
+
+- WWW-Authemticate
+
+  - 리소스 접근시 필요한 인증 방법 정의
+
+  - 401 Unauthorized 응답과 함께 사용
+
+<br/>
+
+---
+
+<br/>
+
+# 쿠키
+
+- Set-Cookie 서버에서 클라이언트로 쿠키 전달(응답)
+
+- Cookie 클라이언트가 서버에서 받은 쿠키를 저장하고, HTTP 요청시 서버로 전달
+
+- <b>생명주기</b>
+
+  - Set-Cookie : expires
+
+    - 만료일 생성
+
+    - GMT 기준
+
+  - Set-Cookie : max-age=3600 (3600초)
+
+    - 0이나 음수를 지정하면 쿠키 삭제
+
+  - 세션 쿠키 : 만료 날짜를 생략하면 브라우저 종료시 까지만 유지
+
+  - 영속 쿠키 : 만료 날짜를 입력하면 해당 날짜까지만 유지
+
+- <b>도메인</b>
+
+  - 명시 : 명시 기준 도메인 + 서브 도메인
+
+    - domain = example.org -> dev.example.org 접근 가능
+
+  - 생략 : 현재 문서 기준만 접근
+
+    - domain = example.org -> dev.example.org 접근 불가
+
+- 경로
+
+  - 경로를 포함한 하위 경로 페이지만 쿠키 접근
+
+  - 일반적으로는 path=/
+
+  - EX
+
+    - /home
+
+    - /home/firset , /home/secones
+
+    - /hello (X)
+
+- Secure
+
+  - 적용시 https인 경우에만 쿠키 전송
+
+- HttpOnly
+
+  - XXS 공격 방지
+
+  - 자바스크립트에서 접근 불가
+
+  - HTTP 전송 에서만 사용
+
+- SameSite
+
+  - XSRF 공격 방지
+
+  - 요청 도메인과 쿠키 설정 도메인이 같은 경우에만 전송 가능
