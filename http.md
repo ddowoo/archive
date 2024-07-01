@@ -876,3 +876,95 @@ Accept-Language: ko,ja;q=0.9,ko-KR;q=0.8,en-US;q=0.7,en;q=0.6,ja-JP;q=0.5
   - XSRF 공격 방지
 
   - 요청 도메인과 쿠키 설정 도메인이 같은 경우에만 전송 가능
+
+# 캐시
+
+- 응답 헤더에 <b>Cache-Control</b>
+
+Cache-Control: public, max-age=86400, no-transform
+
+- 요청시 캐시를 머저 찾고 시간이 유효하면 서버에 요청하지 않고 캐시된 데이터를 이용한다.
+
+## 검증헤더와 조건부 요청
+
+<b>Last-Modified</b>
+<br/>
+<b>if-Modified-Since</b>
+
+- 캐시 유효 시간을 초과해 서버에 다시 요청 할 때 데이터가 동일한 경우
+
+- 헤더에 Last-Modified로 마지막 수정 날짜를 기록해둔다.
+
+- 유효 시간 초과로 다시 요청할때 Last-Modified가 있으면 if-Modified-Since 헤더에 마지막 수정 날짜를 보낸다.
+
+- 만약 서버에서 가지고 있는 데이터와 캐싱된 데이터가 동일하면 HTTP Body에 데이터를 넘기지 않고 304 Not Modified로 응답값을 보낸다.
+
+- 캐시 데이터 유효시간 연장 후 다시 사용
+
+단점
+
+- 날짜 기반 로직 , 1초단위 이하 불가능
+
+- 데이터 수정해서 날짜는 다르지만, 같은 데이터를 수정해 결과가 같은 경우
+
+<b>E Tag</b>
+
+- 캐시용 데이터에 임의의 버전 값을 둔다.
+
+- 데이터가 바뀌면 E Tag를 변경
+
+- E Tag 같으면 유지 다르면 다시 받기로 바뀜
+
+- 캐싱 초과 이후 E Tag 존재시 <b>If-None-Match</b> 헤더를 추가해 서버에 요청 => 서버와 E Tag값이 동일하면 304 Not Modified를 보낸다.
+
+## 캐시와 조건부 요청 헤더
+
+1. <b>Cache-Control</b>
+
+- Cache-Control: max-age
+
+  캐시 유효시간 초 단뒤
+
+- Cache-Control: no-cache
+
+  데이터는 캐시해도 되지만, 항상 원(origin) 서버에 검증 후 사용
+
+- Cache-Control: must-revalidate
+
+  캐시 시간 만료 후 원(origin) 서버에 검증 후 사용
+
+  원서버에 접근이 불가능 한 경우 504 에러를 보낸다. (no-cache와 다른 부분)
+
+- Cache-Control: no-store
+
+  민감한 정보가 있으므로 사용하고 빨리 삭제
+
+- Cache-Control: public
+
+  응답이 public 캐시에 저장되어도 됨 (public 캐시는 프록시 서버 위치)
+
+<br/>
+
+2. Cache-Control
+
+- Pragma: no-cache
+
+- HTTP 1.0 하위 호환
+
+<br/>
+
+3. Expires
+
+- 캐시 만료일을 정확한 날짜로 지정
+
+- max-age와 같이 사용되면 무시됨
+
+<br/>
+
+## 캐시 무효화
+
+브라우저가 임의로 캐시를 해버릴 수 있기 떄문에 절대 캐시되면 안되는 데이터를 아래 모든 헤더를 포함 시켜준다.
+
+- Cache-Control : no-cache, no-store, must-revalidate
+
+- Pragma: no-cache
