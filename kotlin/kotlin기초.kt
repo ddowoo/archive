@@ -123,6 +123,13 @@ fun myFuncTwo(a:Int ,callback:() -> Unit ){
 
 }
 
+// suspend -> 정지함수 실행되고 끝날때까지 기다려줘야함
+// 메인스레드에서 실행 할 수 없음
+suspend fun myFuncThree(){
+
+}
+
+
 fun myMyFunc() {
     // 파라미터가 콜백함수 하나인 경우
     myFunc{
