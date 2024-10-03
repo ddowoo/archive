@@ -1,5 +1,11 @@
-#Private vs Internal
+# Private vs Internal
+
+## private
 
 `private`으로 선언한 변수, 함수, 클래스 등은 선언 위치의 범위에서만 사용 가능
 
 ex) 클래스 내에서 선언된 private 변수는 해당 클래스 내부에서만 참조 간으
+
+## Internal
+
+같은 모듈 내에서만 접근 가능, 라이브러리 개발시 많이 사용되며 외부 모듈에서 참조하지 못하게 하기 위해 사용된다.
